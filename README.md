@@ -34,7 +34,7 @@
 
 ## GitHub 仓库
 
-提交前创建 Public 仓库 `dshw-p01` 后，将链接填写为：`https://github.com/[用户名]/dshw-p01`。
+https://github.com/yangyx258/dshw-p01
 
 ## Git 与数据文件说明
 
@@ -58,7 +58,7 @@
 
 ## AI 使用说明
 
-本项目使用 ChatGPT/Codex 辅助生成项目结构、Notebook 代码和报告文字。主要提示词为：阅读 `homework/readme.md` 与 `homework/ex_P02a_get_clean_fin_data.md`，按 P02a 要求为杨艺欣（25210279）生成可复现的数据下载、清洗、分析和报告项目，暂不关联 GitHub。
+本项目使用 ChatGPT/Codex 辅助生成项目结构、Notebook 代码和报告文字。主要提示词为：阅读 `homework/readme.md` 与 `homework/ex_P02a_get_clean_fin_data.md`，按 P02a 要求为杨艺欣（25210279）生成可复现的数据下载、清洗、分析和报告项目，并同步到 GitHub 仓库。
 
 ## 维护记录
 
