@@ -1,0 +1,18 @@
+# 项目首页
+
+本电子书对应 `ex_P02a` 作业，内容覆盖数据获取、数据管理与数据清洗到统计分析与 CAPM 回归。
+
+## 内容结构
+
+- 第一部分：数据获取
+- 第二部分：数据存储与管理（Parquet 进阶）
+- 第三部分：数据清洗
+- 第四部分：描述性统计与可视化
+- 第五部分：CAPM 回归分析
+- 第六部分：分析报告结论
+
+## 复现说明
+
+1. 安装依赖：`pip install -r requirements.txt`
+2. 依次运行 `01_download.ipynb`、`02_clean.ipynb`、`03_analysis.ipynb`
+3. 执行 `quarto render` 生成在线书页面

@@ -1,0 +1,2180 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>3&nbsp; 第三部分：数据清洗 – P01：金融数据获取、管理与初步分析</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./03_analysis.html" rel="next">
+<link href="./01_download.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-5ccb035bea26c1e21f80f44cf7c27909.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./02_clean.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">第三部分：数据清洗</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">P01：金融数据获取、管理与初步分析</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">项目首页</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01_download.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">第一部分：数据获取</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02_clean.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">第三部分：数据清洗</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">第四部分：描述性统计与可视化</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#单表清洗" id="toc-单表清洗" class="nav-link active" data-scroll-target="#单表清洗"><span class="header-section-number">3.1</span> 3.1 单表清洗</a>
+  <ul class="collapse">
+  <li><a href="#缺失值检测" id="toc-缺失值检测" class="nav-link" data-scroll-target="#缺失值检测"><span class="header-section-number">3.1.1</span> 3.1.1 缺失值检测</a></li>
+  <li><a href="#缺失值处理" id="toc-缺失值处理" class="nav-link" data-scroll-target="#缺失值处理"><span class="header-section-number">3.1.2</span> 3.1.2 缺失值处理</a></li>
+  <li><a href="#日期格式统一" id="toc-日期格式统一" class="nav-link" data-scroll-target="#日期格式统一"><span class="header-section-number">3.1.3</span> 3.1.3 日期格式统一</a></li>
+  <li><a href="#数据类型检查" id="toc-数据类型检查" class="nav-link" data-scroll-target="#数据类型检查"><span class="header-section-number">3.1.4</span> 3.1.4 数据类型检查</a></li>
+  <li><a href="#重复值处理" id="toc-重复值处理" class="nav-link" data-scroll-target="#重复值处理"><span class="header-section-number">3.1.5</span> 3.1.5 重复值处理</a></li>
+  <li><a href="#离群值标注" id="toc-离群值标注" class="nav-link" data-scroll-target="#离群值标注"><span class="header-section-number">3.1.6</span> 3.1.6 离群值标注</a></li>
+  </ul></li>
+  <li><a href="#宽表与长表转换" id="toc-宽表与长表转换" class="nav-link" data-scroll-target="#宽表与长表转换"><span class="header-section-number">3.2</span> 3.2 宽表与长表转换</a></li>
+  <li><a href="#多表合并" id="toc-多表合并" class="nav-link" data-scroll-target="#多表合并"><span class="header-section-number">3.3</span> 3.3 多表合并</a>
+  <ul class="collapse">
+  <li><a href="#数据准备指数宏观与财务清洗" id="toc-数据准备指数宏观与财务清洗" class="nav-link" data-scroll-target="#数据准备指数宏观与财务清洗"><span class="header-section-number">3.3.1</span> 3.3.1 数据准备：指数、宏观与财务清洗</a></li>
+  <li><a href="#合并执行" id="toc-合并执行" class="nav-link" data-scroll-target="#合并执行"><span class="header-section-number">3.3.2</span> 3.3.2 合并执行</a></li>
+  </ul></li>
+  <li><a href="#第二部分数据存储与管理进阶演示" id="toc-第二部分数据存储与管理进阶演示" class="nav-link" data-scroll-target="#第二部分数据存储与管理进阶演示"><span class="header-section-number">4</span> 第二部分：数据存储与管理（进阶演示）</a>
+  <ul class="collapse">
+  <li><a href="#数据存储格式方式-bparquet" id="toc-数据存储格式方式-bparquet" class="nav-link" data-scroll-target="#数据存储格式方式-bparquet"><span class="header-section-number">4.1</span> 2.2 数据存储格式（方式 B：Parquet）</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">第三部分：数据清洗</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>处理下载后的原始表：先做单表清洗，再生成宽表、长表和合并表。除 CSV 外，也用 Parquet 进行存储。</p>
+<div id="2afff0b6" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-05-17T16:03:18.688122Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-05-17T16:03:18.687957Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-05-17T16:03:18.697469Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-05-17T16:03:18.697151Z&quot;}}" data-execution_count="1">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> warnings</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>warnings.filterwarnings(<span class="st">'ignore'</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>PROJECT_ROOT <span class="op">=</span> Path.cwd()</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> PROJECT_ROOT.name <span class="op">!=</span> <span class="st">'dshw-p01'</span>:</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    PROJECT_ROOT <span class="op">=</span> PROJECT_ROOT <span class="op">/</span> <span class="st">'dshw-p01'</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>os.makedirs(PROJECT_ROOT, exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> path <span class="kw">in</span> [</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">'data/stock'</span>, <span class="st">'data/index'</span>, <span class="st">'data/macro'</span>, <span class="st">'data/finance'</span>,</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">'data/clean'</span>, <span class="st">'data/combined'</span>, <span class="st">'output'</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>]:</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    os.makedirs(PROJECT_ROOT <span class="op">/</span> path, exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>PROJECT_ROOT</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>PosixPath('/Users/wonderlab/Desktop/欣欣作业/ds2026/dshw-p01')</code></pre>
+</div>
+</div>
+<div id="4480ca9a" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-05-17T16:03:18.698962Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-05-17T16:03:18.698833Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-05-17T16:03:19.203366Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-05-17T16:03:19.203111Z&quot;}}" data-execution_count="2">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os, time</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pyarrow.parquet <span class="im">as</span> pq</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>STOCK_INFO <span class="op">=</span> pd.DataFrame([</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    {<span class="st">'code'</span>: <span class="st">'000625'</span>, <span class="st">'name'</span>: <span class="st">'长安汽车'</span>, <span class="st">'industry'</span>: <span class="st">'汽车'</span>},</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    {<span class="st">'code'</span>: <span class="st">'601127'</span>, <span class="st">'name'</span>: <span class="st">'赛力斯'</span>, <span class="st">'industry'</span>: <span class="st">'汽车'</span>},</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    {<span class="st">'code'</span>: <span class="st">'600246'</span>, <span class="st">'name'</span>: <span class="st">'万通发展'</span>, <span class="st">'industry'</span>: <span class="st">'房地产'</span>},</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    {<span class="st">'code'</span>: <span class="st">'000560'</span>, <span class="st">'name'</span>: <span class="st">'我爱我家'</span>, <span class="st">'industry'</span>: <span class="st">'房地产'</span>},</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    {<span class="st">'code'</span>: <span class="st">'600519'</span>, <span class="st">'name'</span>: <span class="st">'贵州茅台'</span>, <span class="st">'industry'</span>: <span class="st">'白酒'</span>},</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    {<span class="st">'code'</span>: <span class="st">'000799'</span>, <span class="st">'name'</span>: <span class="st">'酒鬼酒'</span>, <span class="st">'industry'</span>: <span class="st">'白酒'</span>},</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    {<span class="st">'code'</span>: <span class="st">'600578'</span>, <span class="st">'name'</span>: <span class="st">'京能电力'</span>, <span class="st">'industry'</span>: <span class="st">'能源'</span>},</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    {<span class="st">'code'</span>: <span class="st">'601016'</span>, <span class="st">'name'</span>: <span class="st">'节能风电'</span>, <span class="st">'industry'</span>: <span class="st">'能源'</span>},</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    {<span class="st">'code'</span>: <span class="st">'000063'</span>, <span class="st">'name'</span>: <span class="st">'中兴通讯'</span>, <span class="st">'industry'</span>: <span class="st">'通讯'</span>},</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    {<span class="st">'code'</span>: <span class="st">'300136'</span>, <span class="st">'name'</span>: <span class="st">'信维通信'</span>, <span class="st">'industry'</span>: <span class="st">'通讯'</span>},</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<section id="单表清洗" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="单表清洗"><span class="header-section-number">3.1</span> 3.1 单表清洗</h2>
+<p>对 10 只股票原始行情表逐项处理。清洗过程中先把日期列转为 <code>datetime64</code> 并设为索引，便于按时间排序和检查；保存清洗结果前再把日期恢复为普通列，方便后续合并。</p>
+<div id="b63ef792" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-05-17T16:03:19.204568Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-05-17T16:03:19.204481Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-05-17T16:03:19.336208Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-05-17T16:03:19.335980Z&quot;}}" data-execution_count="3">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>stock_frames <span class="op">=</span> []</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>missing_rows <span class="op">=</span> []</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>dtype_rows <span class="op">=</span> []</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>clean_log <span class="op">=</span> []</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>extreme_rows <span class="op">=</span> []</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>date_index_rows <span class="op">=</span> []</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>numeric_cols <span class="op">=</span> [<span class="st">'open'</span>, <span class="st">'close'</span>, <span class="st">'high'</span>, <span class="st">'low'</span>, <span class="st">'volume'</span>, <span class="st">'amount'</span>]</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> path <span class="kw">in</span> <span class="bu">sorted</span>((PROJECT_ROOT <span class="op">/</span> <span class="st">'data/stock'</span>).glob(<span class="st">'stock_*.csv'</span>)):</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.read_csv(path, dtype<span class="op">=</span>{<span class="st">'code'</span>: <span class="bu">str</span>})</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    code <span class="op">=</span> df[<span class="st">'code'</span>].iloc[<span class="dv">0</span>]</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    before_rows <span class="op">=</span> <span class="bu">len</span>(df)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> col <span class="kw">in</span> df.columns:</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>        miss <span class="op">=</span> df[col].isna().<span class="bu">sum</span>()</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>        missing_rows.append({</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>            <span class="st">'file'</span>: path.name,</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>            <span class="st">'code'</span>: code,</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>            <span class="st">'column'</span>: col,</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>            <span class="st">'missing_count'</span>: <span class="bu">int</span>(miss),</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>            <span class="st">'missing_ratio'</span>: miss <span class="op">/</span> <span class="bu">max</span>(<span class="bu">len</span>(df), <span class="dv">1</span>)</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>        })</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>    before_dtypes <span class="op">=</span> df[[<span class="st">'date'</span>] <span class="op">+</span> numeric_cols].dtypes.astype(<span class="bu">str</span>).to_dict()</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>    df[<span class="st">'date'</span>] <span class="op">=</span> pd.to_datetime(df[<span class="st">'date'</span>])</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> col <span class="kw">in</span> numeric_cols:</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>        df[col] <span class="op">=</span> pd.to_numeric(df[col], errors<span class="op">=</span><span class="st">'coerce'</span>)</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>    after_dtypes <span class="op">=</span> df[[<span class="st">'date'</span>] <span class="op">+</span> numeric_cols].dtypes.astype(<span class="bu">str</span>).to_dict()</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> col <span class="kw">in</span> [<span class="st">'date'</span>] <span class="op">+</span> numeric_cols:</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>        dtype_rows.append({</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>            <span class="st">'file'</span>: path.name,</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>            <span class="st">'code'</span>: code,</span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>            <span class="st">'column'</span>: col,</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>            <span class="st">'before_dtype'</span>: before_dtypes[col],</span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>            <span class="st">'after_dtype'</span>: after_dtypes[col],</span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>            <span class="st">'converted'</span>: before_dtypes[col] <span class="op">!=</span> after_dtypes[col]</span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>        })</span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> df.set_index(<span class="st">'date'</span>).sort_index()</span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>    date_index_rows.append({</span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>        <span class="st">'file'</span>: path.name,</span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>        <span class="st">'code'</span>: code,</span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>        <span class="st">'index_name'</span>: df.index.name,</span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>        <span class="st">'index_dtype'</span>: <span class="bu">str</span>(df.index.dtype),</span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>        <span class="st">'is_monotonic_increasing'</span>: <span class="bu">bool</span>(df.index.is_monotonic_increasing)</span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>    dup_count <span class="op">=</span> df.reset_index().duplicated([<span class="st">'code'</span>, <span class="st">'date'</span>]).<span class="bu">sum</span>()</span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>    missing_numeric_before <span class="op">=</span> df[numeric_cols].isna().<span class="bu">sum</span>().<span class="bu">sum</span>()</span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> df.reset_index().drop_duplicates([<span class="st">'code'</span>, <span class="st">'date'</span>], keep<span class="op">=</span><span class="st">'first'</span>)</span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> df.set_index(<span class="st">'date'</span>).sort_index()</span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>    df[numeric_cols] <span class="op">=</span> df.groupby(<span class="st">'code'</span>)[numeric_cols].ffill()</span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>    missing_numeric_after <span class="op">=</span> df[numeric_cols].isna().<span class="bu">sum</span>().<span class="bu">sum</span>()</span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>    df[<span class="st">'pct_chg'</span>] <span class="op">=</span> df.groupby(<span class="st">'code'</span>)[<span class="st">'close'</span>].pct_change() <span class="op">*</span> <span class="dv">100</span></span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a>    df[<span class="st">'return'</span>] <span class="op">=</span> np.log(df[<span class="st">'close'</span>] <span class="op">/</span> df.groupby(<span class="st">'code'</span>)[<span class="st">'close'</span>].shift(<span class="dv">1</span>))</span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a>    df[<span class="st">'is_extreme'</span>] <span class="op">=</span> df[<span class="st">'return'</span>].<span class="bu">abs</span>() <span class="op">&gt;</span> <span class="fl">0.20</span></span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>    extreme_sample <span class="op">=</span> df[df[<span class="st">'is_extreme'</span>]].reset_index()[[<span class="st">'date'</span>, <span class="st">'code'</span>, <span class="st">'name'</span>, <span class="st">'industry'</span>, <span class="st">'close'</span>, <span class="st">'return'</span>, <span class="st">'pct_chg'</span>]]</span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a>    extreme_rows.append(extreme_sample)</span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a>    stock_frames.append(df.reset_index())</span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a>    clean_log.append({</span>
+<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a>        <span class="st">'code'</span>: code,</span>
+<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a>        <span class="st">'before_rows'</span>: before_rows,</span>
+<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a>        <span class="st">'after_rows'</span>: <span class="bu">len</span>(df),</span>
+<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a>        <span class="st">'duplicates_removed'</span>: <span class="bu">int</span>(dup_count),</span>
+<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a>        <span class="st">'numeric_missing_before_ffill'</span>: <span class="bu">int</span>(missing_numeric_before),</span>
+<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a>        <span class="st">'numeric_missing_after_ffill'</span>: <span class="bu">int</span>(missing_numeric_after),</span>
+<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a>        <span class="st">'extreme_rows'</span>: <span class="bu">int</span>(df[<span class="st">'is_extreme'</span>].<span class="bu">sum</span>())</span>
+<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a>missing_summary <span class="op">=</span> pd.DataFrame(missing_rows)</span>
+<span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a>dtype_log <span class="op">=</span> pd.DataFrame(dtype_rows)</span>
+<span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a>date_index_log <span class="op">=</span> pd.DataFrame(date_index_rows)</span>
+<span id="cb4-78"><a href="#cb4-78" aria-hidden="true" tabindex="-1"></a>clean_log <span class="op">=</span> pd.DataFrame(clean_log)</span>
+<span id="cb4-79"><a href="#cb4-79" aria-hidden="true" tabindex="-1"></a>extreme_detail <span class="op">=</span> pd.concat(extreme_rows, ignore_index<span class="op">=</span><span class="va">True</span>) <span class="cf">if</span> extreme_rows <span class="cf">else</span> pd.DataFrame(</span>
+<span id="cb4-80"><a href="#cb4-80" aria-hidden="true" tabindex="-1"></a>    columns<span class="op">=</span>[<span class="st">'date'</span>, <span class="st">'code'</span>, <span class="st">'name'</span>, <span class="st">'industry'</span>, <span class="st">'close'</span>, <span class="st">'return'</span>, <span class="st">'pct_chg'</span>]</span>
+<span id="cb4-81"><a href="#cb4-81" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-82"><a href="#cb4-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-83"><a href="#cb4-83" aria-hidden="true" tabindex="-1"></a>stock_clean <span class="op">=</span> pd.concat(stock_frames, ignore_index<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb4-84"><a href="#cb4-84" aria-hidden="true" tabindex="-1"></a>stock_clean <span class="op">=</span> stock_clean.merge(STOCK_INFO, on<span class="op">=</span>[<span class="st">'code'</span>, <span class="st">'name'</span>, <span class="st">'industry'</span>], how<span class="op">=</span><span class="st">'left'</span>)</span>
+<span id="cb4-85"><a href="#cb4-85" aria-hidden="true" tabindex="-1"></a>stock_clean.to_csv(PROJECT_ROOT <span class="op">/</span> <span class="st">'data/clean/stock_clean.csv'</span>, index<span class="op">=</span><span class="va">False</span>, encoding<span class="op">=</span><span class="st">'utf-8-sig'</span>)</span>
+<span id="cb4-86"><a href="#cb4-86" aria-hidden="true" tabindex="-1"></a>stock_clean.to_parquet(PROJECT_ROOT <span class="op">/</span> <span class="st">'data/clean/stock_clean.parquet'</span>, index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb4-87"><a href="#cb4-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-88"><a href="#cb4-88" aria-hidden="true" tabindex="-1"></a>clean_log</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">code</th>
+<th data-quarto-table-cell-role="th">before_rows</th>
+<th data-quarto-table-cell-role="th">after_rows</th>
+<th data-quarto-table-cell-role="th">duplicates_removed</th>
+<th data-quarto-table-cell-role="th">numeric_missing_before_ffill</th>
+<th data-quarto-table-cell-role="th">numeric_missing_after_ffill</th>
+<th data-quarto-table-cell-role="th">extreme_rows</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>000063</td>
+<td>1539</td>
+<td>1539</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>000560</td>
+<td>1540</td>
+<td>1540</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>000625</td>
+<td>1540</td>
+<td>1540</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>000799</td>
+<td>1540</td>
+<td>1540</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>300136</td>
+<td>1540</td>
+<td>1540</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">5</th>
+<td>600246</td>
+<td>1539</td>
+<td>1539</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">6</th>
+<td>600519</td>
+<td>1540</td>
+<td>1540</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">7</th>
+<td>600578</td>
+<td>1540</td>
+<td>1540</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">8</th>
+<td>601016</td>
+<td>1534</td>
+<td>1534</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">9</th>
+<td>601127</td>
+<td>1539</td>
+<td>1539</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<section id="缺失值检测" class="level3" data-number="3.1.1">
+<h3 data-number="3.1.1" class="anchored" data-anchor-id="缺失值检测"><span class="header-section-number">3.1.1</span> 3.1.1 缺失值检测</h3>
+<p>先统计每列缺失值的数量和比例。</p>
+<p>缺失值可能来自停牌、数据源字段为空，或者某些交易日没有对应的成交金额等字段。由于股票数据本身只包含交易日，节假日通常不会表现为表内缺失，而是日期序列中没有这些日期。</p>
+<div id="af17e683" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-05-17T16:03:19.337305Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-05-17T16:03:19.337242Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-05-17T16:03:19.341312Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-05-17T16:03:19.341112Z&quot;}}" data-execution_count="4">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>missing_summary.sort_values([<span class="st">'code'</span>, <span class="st">'missing_count'</span>, <span class="st">'column'</span>], ascending<span class="op">=</span>[<span class="va">True</span>, <span class="va">False</span>, <span class="va">True</span>]).head(<span class="dv">30</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">file</th>
+<th data-quarto-table-cell-role="th">code</th>
+<th data-quarto-table-cell-role="th">column</th>
+<th data-quarto-table-cell-role="th">missing_count</th>
+<th data-quarto-table-cell-role="th">missing_ratio</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">9</th>
+<td>stock_000063.csv</td>
+<td>000063</td>
+<td>amount</td>
+<td>0</td>
+<td>0.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">5</th>
+<td>stock_000063.csv</td>
+<td>000063</td>
+<td>close</td>
+<td>0</td>
+<td>0.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">1</th>
+<td>stock_000063.csv</td>
+<td>000063</td>
+<td>code</td>
+<td>0</td>
+<td>0.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">0</th>
+<td>stock_000063.csv</td>
+<td>000063</td>
+<td>date</td>
+<td>0</td>
+<td>0.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">6</th>
+<td>stock_000063.csv</td>
+<td>000063</td>
+<td>high</td>
+<td>0</td>
+<td>0.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>stock_000063.csv</td>
+<td>000063</td>
+<td>industry</td>
+<td>0</td>
+<td>0.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">7</th>
+<td>stock_000063.csv</td>
+<td>000063</td>
+<td>low</td>
+<td>0</td>
+<td>0.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">2</th>
+<td>stock_000063.csv</td>
+<td>000063</td>
+<td>name</td>
+<td>0</td>
+<td>0.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>stock_000063.csv</td>
+<td>000063</td>
+<td>open</td>
+<td>0</td>
+<td>0.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">8</th>
+<td>stock_000063.csv</td>
+<td>000063</td>
+<td>volume</td>
+<td>0</td>
+<td>0.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">19</th>
+<td>stock_000560.csv</td>
+<td>000560</td>
+<td>amount</td>
+<td>0</td>
+<td>0.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">15</th>
+<td>stock_000560.csv</td>
+<td>000560</td>
+<td>close</td>
+<td>0</td>
+<td>0.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">11</th>
+<td>stock_000560.csv</td>
+<td>000560</td>
+<td>code</td>
+<td>0</td>
+<td>0.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">10</th>
+<td>stock_000560.csv</td>
+<td>000560</td>
+<td>date</td>
+<td>0</td>
+<td>0.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">16</th>
+<td>stock_000560.csv</td>
+<td>000560</td>
+<td>high</td>
+<td>0</td>
+<td>0.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">13</th>
+<td>stock_000560.csv</td>
+<td>000560</td>
+<td>industry</td>
+<td>0</td>
+<td>0.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">17</th>
+<td>stock_000560.csv</td>
+<td>000560</td>
+<td>low</td>
+<td>0</td>
+<td>0.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">12</th>
+<td>stock_000560.csv</td>
+<td>000560</td>
+<td>name</td>
+<td>0</td>
+<td>0.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">14</th>
+<td>stock_000560.csv</td>
+<td>000560</td>
+<td>open</td>
+<td>0</td>
+<td>0.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">18</th>
+<td>stock_000560.csv</td>
+<td>000560</td>
+<td>volume</td>
+<td>0</td>
+<td>0.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">29</th>
+<td>stock_000625.csv</td>
+<td>000625</td>
+<td>amount</td>
+<td>0</td>
+<td>0.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">25</th>
+<td>stock_000625.csv</td>
+<td>000625</td>
+<td>close</td>
+<td>0</td>
+<td>0.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">21</th>
+<td>stock_000625.csv</td>
+<td>000625</td>
+<td>code</td>
+<td>0</td>
+<td>0.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">20</th>
+<td>stock_000625.csv</td>
+<td>000625</td>
+<td>date</td>
+<td>0</td>
+<td>0.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">26</th>
+<td>stock_000625.csv</td>
+<td>000625</td>
+<td>high</td>
+<td>0</td>
+<td>0.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">23</th>
+<td>stock_000625.csv</td>
+<td>000625</td>
+<td>industry</td>
+<td>0</td>
+<td>0.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">27</th>
+<td>stock_000625.csv</td>
+<td>000625</td>
+<td>low</td>
+<td>0</td>
+<td>0.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">22</th>
+<td>stock_000625.csv</td>
+<td>000625</td>
+<td>name</td>
+<td>0</td>
+<td>0.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">24</th>
+<td>stock_000625.csv</td>
+<td>000625</td>
+<td>open</td>
+<td>0</td>
+<td>0.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">28</th>
+<td>stock_000625.csv</td>
+<td>000625</td>
+<td>volume</td>
+<td>0</td>
+<td>0.0</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="缺失值处理" class="level3" data-number="3.1.2">
+<h3 data-number="3.1.2" class="anchored" data-anchor-id="缺失值处理"><span class="header-section-number">3.1.2</span> 3.1.2 缺失值处理</h3>
+<p>价格和成交量字段使用同一股票内部的向前填充 <code>ffill</code>。这样做的原因是要计算连续价格序列和收益率，少量字段缺失时沿用最近一个有效交易日的信息，比直接删除空值整行更能保留样本长度。</p>
+<div id="fa8434ab" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-05-17T16:03:19.342278Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-05-17T16:03:19.342218Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-05-17T16:03:19.344773Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-05-17T16:03:19.344607Z&quot;}}" data-execution_count="5">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>clean_log[[<span class="st">'code'</span>, <span class="st">'before_rows'</span>, <span class="st">'after_rows'</span>, <span class="st">'numeric_missing_before_ffill'</span>, <span class="st">'numeric_missing_after_ffill'</span>]]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">code</th>
+<th data-quarto-table-cell-role="th">before_rows</th>
+<th data-quarto-table-cell-role="th">after_rows</th>
+<th data-quarto-table-cell-role="th">numeric_missing_before_ffill</th>
+<th data-quarto-table-cell-role="th">numeric_missing_after_ffill</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>000063</td>
+<td>1539</td>
+<td>1539</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>000560</td>
+<td>1540</td>
+<td>1540</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>000625</td>
+<td>1540</td>
+<td>1540</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>000799</td>
+<td>1540</td>
+<td>1540</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>300136</td>
+<td>1540</td>
+<td>1540</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">5</th>
+<td>600246</td>
+<td>1539</td>
+<td>1539</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">6</th>
+<td>600519</td>
+<td>1540</td>
+<td>1540</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">7</th>
+<td>600578</td>
+<td>1540</td>
+<td>1540</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">8</th>
+<td>601016</td>
+<td>1534</td>
+<td>1534</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">9</th>
+<td>601127</td>
+<td>1539</td>
+<td>1539</td>
+<td>0</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="日期格式统一" class="level3" data-number="3.1.3">
+<h3 data-number="3.1.3" class="anchored" data-anchor-id="日期格式统一"><span class="header-section-number">3.1.3</span> 3.1.3 日期格式统一</h3>
+<p>所有股票表的 <code>date</code> 都被转换为 <code>datetime64</code>，并在单表清洗阶段设为索引。这样可以保证按交易日排序、去重和收益率计算都基于统一的时间类型。</p>
+<div id="e8d8e393" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-05-17T16:03:19.345732Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-05-17T16:03:19.345673Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-05-17T16:03:19.348099Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-05-17T16:03:19.347928Z&quot;}}" data-execution_count="6">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>date_index_log</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">file</th>
+<th data-quarto-table-cell-role="th">code</th>
+<th data-quarto-table-cell-role="th">index_name</th>
+<th data-quarto-table-cell-role="th">index_dtype</th>
+<th data-quarto-table-cell-role="th">is_monotonic_increasing</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>stock_000063.csv</td>
+<td>000063</td>
+<td>date</td>
+<td>datetime64[ns]</td>
+<td>True</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>stock_000560.csv</td>
+<td>000560</td>
+<td>date</td>
+<td>datetime64[ns]</td>
+<td>True</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>stock_000625.csv</td>
+<td>000625</td>
+<td>date</td>
+<td>datetime64[ns]</td>
+<td>True</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>stock_000799.csv</td>
+<td>000799</td>
+<td>date</td>
+<td>datetime64[ns]</td>
+<td>True</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>stock_300136.csv</td>
+<td>300136</td>
+<td>date</td>
+<td>datetime64[ns]</td>
+<td>True</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">5</th>
+<td>stock_600246.csv</td>
+<td>600246</td>
+<td>date</td>
+<td>datetime64[ns]</td>
+<td>True</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">6</th>
+<td>stock_600519.csv</td>
+<td>600519</td>
+<td>date</td>
+<td>datetime64[ns]</td>
+<td>True</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">7</th>
+<td>stock_600578.csv</td>
+<td>600578</td>
+<td>date</td>
+<td>datetime64[ns]</td>
+<td>True</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">8</th>
+<td>stock_601016.csv</td>
+<td>601016</td>
+<td>date</td>
+<td>datetime64[ns]</td>
+<td>True</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">9</th>
+<td>stock_601127.csv</td>
+<td>601127</td>
+<td>date</td>
+<td>datetime64[ns]</td>
+<td>True</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="数据类型检查" class="level3" data-number="3.1.4">
+<h3 data-number="3.1.4" class="anchored" data-anchor-id="数据类型检查"><span class="header-section-number">3.1.4</span> 3.1.4 数据类型检查</h3>
+<p>价格、成交量和成交额字段都需要是数值型。下面的表记录转换前后的类型，<code>converted=True</code> 表示该字段在清洗时发生了类型转换。</p>
+<div id="2065b5fa" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-05-17T16:03:19.348967Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-05-17T16:03:19.348916Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-05-17T16:03:19.351920Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-05-17T16:03:19.351727Z&quot;}}" data-execution_count="7">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>dtype_log.sort_values([<span class="st">'code'</span>, <span class="st">'column'</span>]).head(<span class="dv">80</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">file</th>
+<th data-quarto-table-cell-role="th">code</th>
+<th data-quarto-table-cell-role="th">column</th>
+<th data-quarto-table-cell-role="th">before_dtype</th>
+<th data-quarto-table-cell-role="th">after_dtype</th>
+<th data-quarto-table-cell-role="th">converted</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">6</th>
+<td>stock_000063.csv</td>
+<td>000063</td>
+<td>amount</td>
+<td>float64</td>
+<td>float64</td>
+<td>False</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">2</th>
+<td>stock_000063.csv</td>
+<td>000063</td>
+<td>close</td>
+<td>float64</td>
+<td>float64</td>
+<td>False</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>stock_000063.csv</td>
+<td>000063</td>
+<td>date</td>
+<td>object</td>
+<td>datetime64[ns]</td>
+<td>True</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>stock_000063.csv</td>
+<td>000063</td>
+<td>high</td>
+<td>float64</td>
+<td>float64</td>
+<td>False</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>stock_000063.csv</td>
+<td>000063</td>
+<td>low</td>
+<td>float64</td>
+<td>float64</td>
+<td>False</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">...</th>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">63</th>
+<td>stock_601127.csv</td>
+<td>601127</td>
+<td>date</td>
+<td>object</td>
+<td>datetime64[ns]</td>
+<td>True</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">66</th>
+<td>stock_601127.csv</td>
+<td>601127</td>
+<td>high</td>
+<td>float64</td>
+<td>float64</td>
+<td>False</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">67</th>
+<td>stock_601127.csv</td>
+<td>601127</td>
+<td>low</td>
+<td>float64</td>
+<td>float64</td>
+<td>False</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">64</th>
+<td>stock_601127.csv</td>
+<td>601127</td>
+<td>open</td>
+<td>float64</td>
+<td>float64</td>
+<td>False</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">68</th>
+<td>stock_601127.csv</td>
+<td>601127</td>
+<td>volume</td>
+<td>float64</td>
+<td>float64</td>
+<td>False</td>
+</tr>
+</tbody>
+</table>
+
+<p>70 rows × 6 columns</p>
+</div>
+</div>
+</div>
+</section>
+<section id="重复值处理" class="level3" data-number="3.1.5">
+<h3 data-number="3.1.5" class="anchored" data-anchor-id="重复值处理"><span class="header-section-number">3.1.5</span> 3.1.5 重复值处理</h3>
+<p>重复值按 <code>code-date</code> 检测，同一只股票同一天只保留第一条记录。这样能避免同一交易日被重复计入收益率和后续统计。</p>
+<p>如果 <code>duplicates_removed</code> 为 0，说明原始股票行情表没有发现重复交易日；如果大于 0，则表示已删除对应数量的重复记录。</p>
+<div id="19c97652" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-05-17T16:03:19.352865Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-05-17T16:03:19.352812Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-05-17T16:03:19.355316Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-05-17T16:03:19.355130Z&quot;}}" data-execution_count="8">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>clean_log[[<span class="st">'code'</span>, <span class="st">'before_rows'</span>, <span class="st">'after_rows'</span>, <span class="st">'duplicates_removed'</span>]]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">code</th>
+<th data-quarto-table-cell-role="th">before_rows</th>
+<th data-quarto-table-cell-role="th">after_rows</th>
+<th data-quarto-table-cell-role="th">duplicates_removed</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>000063</td>
+<td>1539</td>
+<td>1539</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>000560</td>
+<td>1540</td>
+<td>1540</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>000625</td>
+<td>1540</td>
+<td>1540</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>000799</td>
+<td>1540</td>
+<td>1540</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>300136</td>
+<td>1540</td>
+<td>1540</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">5</th>
+<td>600246</td>
+<td>1539</td>
+<td>1539</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">6</th>
+<td>600519</td>
+<td>1540</td>
+<td>1540</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">7</th>
+<td>600578</td>
+<td>1540</td>
+<td>1540</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">8</th>
+<td>601016</td>
+<td>1534</td>
+<td>1534</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">9</th>
+<td>601127</td>
+<td>1539</td>
+<td>1539</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="离群值标注" class="level3" data-number="3.1.6">
+<h3 data-number="3.1.6" class="anchored" data-anchor-id="离群值标注"><span class="header-section-number">3.1.6</span> 3.1.6 离群值标注</h3>
+<p>这里计算日对数收益率，并把单日收益率绝对值超过 20% 的记录标为 <code>is_extreme=True</code>。这些记录只标注、不删除，因为它们可能来自真实的大幅涨跌、复权价格调整、停复牌后的价格跳跃，或者数据源异常。</p>
+<div id="b0a23463" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-05-17T16:03:19.356226Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-05-17T16:03:19.356175Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-05-17T16:03:19.359826Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-05-17T16:03:19.359649Z&quot;}}" data-execution_count="9">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>extreme_summary <span class="op">=</span> clean_log[[<span class="st">'code'</span>, <span class="st">'extreme_rows'</span>]].sort_values(<span class="st">'extreme_rows'</span>, ascending<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>display(extreme_summary)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>extreme_detail.sort_values(<span class="st">'return'</span>, key<span class="op">=</span><span class="kw">lambda</span> s: s.<span class="bu">abs</span>(), ascending<span class="op">=</span><span class="va">False</span>).head(<span class="dv">20</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">code</th>
+<th data-quarto-table-cell-role="th">extreme_rows</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>300136</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">0</th>
+<td>000063</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">1</th>
+<td>000560</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">2</th>
+<td>000625</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">3</th>
+<td>000799</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">5</th>
+<td>600246</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">6</th>
+<td>600519</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">7</th>
+<td>600578</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">8</th>
+<td>601016</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">9</th>
+<td>601127</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="9">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">date</th>
+<th data-quarto-table-cell-role="th">code</th>
+<th data-quarto-table-cell-role="th">name</th>
+<th data-quarto-table-cell-role="th">industry</th>
+<th data-quarto-table-cell-role="th">close</th>
+<th data-quarto-table-cell-role="th">return</th>
+<th data-quarto-table-cell-role="th">pct_chg</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>2025-04-07</td>
+<td>300136</td>
+<td>信维通信</td>
+<td>通讯</td>
+<td>243.18</td>
+<td>-0.223028</td>
+<td>-19.990788</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="宽表与长表转换" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="宽表与长表转换"><span class="header-section-number">3.2</span> 3.2 宽表与长表转换</h2>
+<p>把 10 只股票的收盘价先合并为宽表，再用 <code>pd.melt</code> 转回长表。 对比： - 宽表以日期为索引、每列一只股票，适合做相关系数矩阵、组合收益和多资产横向比较。 - 长表字段为 <code>date, code, close</code>，更适合分组统计、分面绘图，以及和行业、宏观等其他表继续合并。</p>
+<div id="f3881c5a" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-05-17T16:03:19.360732Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-05-17T16:03:19.360663Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-05-17T16:03:19.385537Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-05-17T16:03:19.385311Z&quot;}}" data-execution_count="10">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>close_wide <span class="op">=</span> stock_clean.pivot(index<span class="op">=</span><span class="st">'date'</span>, columns<span class="op">=</span><span class="st">'code'</span>, values<span class="op">=</span><span class="st">'close'</span>).sort_index()</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>close_long <span class="op">=</span> close_wide.reset_index().melt(id_vars<span class="op">=</span><span class="st">'date'</span>, var_name<span class="op">=</span><span class="st">'code'</span>, value_name<span class="op">=</span><span class="st">'close'</span>)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>close_wide.to_csv(PROJECT_ROOT <span class="op">/</span> <span class="st">'data/clean/stock_close_wide.csv'</span>, encoding<span class="op">=</span><span class="st">'utf-8-sig'</span>)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>close_long.to_csv(PROJECT_ROOT <span class="op">/</span> <span class="st">'data/clean/stock_close_long.csv'</span>, index<span class="op">=</span><span class="va">False</span>, encoding<span class="op">=</span><span class="st">'utf-8-sig'</span>)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'宽表形状: </span><span class="sc">{</span>close_wide<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'长表形状: </span><span class="sc">{</span>close_long<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>display(close_wide.tail())</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>close_long.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>宽表形状: (1540, 10)
+长表形状: (15400, 3)</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">code</th>
+<th data-quarto-table-cell-role="th">000063</th>
+<th data-quarto-table-cell-role="th">000560</th>
+<th data-quarto-table-cell-role="th">000625</th>
+<th data-quarto-table-cell-role="th">000799</th>
+<th data-quarto-table-cell-role="th">300136</th>
+<th data-quarto-table-cell-role="th">600246</th>
+<th data-quarto-table-cell-role="th">600519</th>
+<th data-quarto-table-cell-role="th">600578</th>
+<th data-quarto-table-cell-role="th">601016</th>
+<th data-quarto-table-cell-role="th">601127</th>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">date</th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2026-05-11</th>
+<td>720.32</td>
+<td>17.70</td>
+<td>144.32</td>
+<td>98.22</td>
+<td>1536.64</td>
+<td>160.73</td>
+<td>11812.46</td>
+<td>32.39</td>
+<td>13.75</td>
+<td>93.78</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">2026-05-12</th>
+<td>701.53</td>
+<td>17.64</td>
+<td>142.30</td>
+<td>95.42</td>
+<td>1453.27</td>
+<td>163.35</td>
+<td>11753.63</td>
+<td>32.89</td>
+<td>13.75</td>
+<td>91.21</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2026-05-13</th>
+<td>715.16</td>
+<td>16.90</td>
+<td>141.06</td>
+<td>95.25</td>
+<td>1511.77</td>
+<td>163.84</td>
+<td>11662.86</td>
+<td>36.20</td>
+<td>15.12</td>
+<td>91.96</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">2026-05-14</th>
+<td>691.77</td>
+<td>16.48</td>
+<td>138.11</td>
+<td>96.55</td>
+<td>1362.99</td>
+<td>156.11</td>
+<td>11646.20</td>
+<td>39.83</td>
+<td>13.70</td>
+<td>89.42</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2026-05-15</th>
+<td>676.12</td>
+<td>16.11</td>
+<td>137.65</td>
+<td>92.32</td>
+<td>1324.43</td>
+<td>165.96</td>
+<td>11566.20</td>
+<td>43.83</td>
+<td>13.51</td>
+<td>87.54</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">date</th>
+<th data-quarto-table-cell-role="th">code</th>
+<th data-quarto-table-cell-role="th">close</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>2020-01-02</td>
+<td>000063</td>
+<td>602.59</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>2020-01-03</td>
+<td>000063</td>
+<td>621.29</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>2020-01-06</td>
+<td>000063</td>
+<td>623.84</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>2020-01-07</td>
+<td>000063</td>
+<td>622.14</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>2020-01-08</td>
+<td>000063</td>
+<td>607.01</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="多表合并" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="多表合并"><span class="header-section-number">3.3</span> 3.3 多表合并</h2>
+<p>把个股、指数、宏观、财务数据按日期或月份对齐。先准备各表，再执行合并。</p>
+<section id="数据准备指数宏观与财务清洗" class="level3" data-number="3.3.1">
+<h3 data-number="3.3.1" class="anchored" data-anchor-id="数据准备指数宏观与财务清洗"><span class="header-section-number">3.3.1</span> 3.3.1 数据准备：指数、宏观与财务清洗</h3>
+<p>指数是日度数据，需要统一日期格式并计算沪深 300 等指数收益率。宏观指标是月度数据，因此先把日期转成月份，再整理成长表和宽表。财务指标保留公司-年度-指标的长格式，同时生成一份宽表，方便后面画 ROE。</p>
+<div id="17cdebb8" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-05-17T16:03:19.386514Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-05-17T16:03:19.386461Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-05-17T16:03:19.415893Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-05-17T16:03:19.415688Z&quot;}}" data-execution_count="11">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>index_frames <span class="op">=</span> []</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> path <span class="kw">in</span> <span class="bu">sorted</span>((PROJECT_ROOT <span class="op">/</span> <span class="st">'data/index'</span>).glob(<span class="st">'index_*.csv'</span>)):</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.read_csv(path, dtype<span class="op">=</span>{<span class="st">'code'</span>: <span class="bu">str</span>})</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    df[<span class="st">'date'</span>] <span class="op">=</span> pd.to_datetime(df[<span class="st">'date'</span>])</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> col <span class="kw">in</span> [<span class="st">'open'</span>, <span class="st">'close'</span>, <span class="st">'high'</span>, <span class="st">'low'</span>, <span class="st">'volume'</span>, <span class="st">'amount'</span>]:</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>        df[col] <span class="op">=</span> pd.to_numeric(df[col], errors<span class="op">=</span><span class="st">'coerce'</span>)</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> df.sort_values([<span class="st">'code'</span>, <span class="st">'date'</span>])</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    df[<span class="st">'pct_chg'</span>] <span class="op">=</span> df.groupby(<span class="st">'code'</span>)[<span class="st">'close'</span>].pct_change() <span class="op">*</span> <span class="dv">100</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    df[<span class="st">'index_return'</span>] <span class="op">=</span> np.log(df[<span class="st">'close'</span>] <span class="op">/</span> df.groupby(<span class="st">'code'</span>)[<span class="st">'close'</span>].shift(<span class="dv">1</span>))</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    index_frames.append(df)</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>index_clean <span class="op">=</span> pd.concat(index_frames, ignore_index<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>index_clean.to_csv(PROJECT_ROOT <span class="op">/</span> <span class="st">'data/clean/index_clean.csv'</span>, index<span class="op">=</span><span class="va">False</span>, encoding<span class="op">=</span><span class="st">'utf-8-sig'</span>)</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>macro_frames <span class="op">=</span> []</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> path <span class="kw">in</span> <span class="bu">sorted</span>((PROJECT_ROOT <span class="op">/</span> <span class="st">'data/macro'</span>).glob(<span class="st">'macro_*.csv'</span>)):</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.read_csv(path)</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>    df[<span class="st">'date'</span>] <span class="op">=</span> pd.to_datetime(df[<span class="st">'date'</span>])</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>    df[<span class="st">'month'</span>] <span class="op">=</span> df[<span class="st">'date'</span>].dt.to_period(<span class="st">'M'</span>).astype(<span class="bu">str</span>)</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>    macro_frames.append(df[[<span class="st">'month'</span>, <span class="st">'indicator'</span>, <span class="st">'value'</span>]])</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>macro_long <span class="op">=</span> pd.concat(macro_frames, ignore_index<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>macro_wide <span class="op">=</span> macro_long.pivot_table(index<span class="op">=</span><span class="st">'month'</span>, columns<span class="op">=</span><span class="st">'indicator'</span>, values<span class="op">=</span><span class="st">'value'</span>, aggfunc<span class="op">=</span><span class="st">'last'</span>).reset_index()</span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>macro_long.to_csv(PROJECT_ROOT <span class="op">/</span> <span class="st">'data/clean/macro_clean.csv'</span>, index<span class="op">=</span><span class="va">False</span>, encoding<span class="op">=</span><span class="st">'utf-8-sig'</span>)</span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>finance <span class="op">=</span> pd.read_csv(PROJECT_ROOT <span class="op">/</span> <span class="st">'data/finance/finance_ratios.csv'</span>, dtype<span class="op">=</span>{<span class="st">'code'</span>: <span class="bu">str</span>})</span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>finance[<span class="st">'year'</span>] <span class="op">=</span> pd.to_numeric(finance[<span class="st">'year'</span>], errors<span class="op">=</span><span class="st">'coerce'</span>).astype(<span class="st">'Int64'</span>)</span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>finance[<span class="st">'value'</span>] <span class="op">=</span> pd.to_numeric(finance[<span class="st">'value'</span>], errors<span class="op">=</span><span class="st">'coerce'</span>)</span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>finance <span class="op">=</span> finance.dropna(subset<span class="op">=</span>[<span class="st">'code'</span>, <span class="st">'year'</span>, <span class="st">'indicator'</span>, <span class="st">'value'</span>])</span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>finance.to_csv(PROJECT_ROOT <span class="op">/</span> <span class="st">'data/clean/finance_clean.csv'</span>, index<span class="op">=</span><span class="va">False</span>, encoding<span class="op">=</span><span class="st">'utf-8-sig'</span>)</span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a>finance_wide <span class="op">=</span> finance.pivot_table(index<span class="op">=</span>[<span class="st">'code'</span>, <span class="st">'name'</span>, <span class="st">'industry'</span>, <span class="st">'year'</span>], columns<span class="op">=</span><span class="st">'indicator'</span>, values<span class="op">=</span><span class="st">'value'</span>, aggfunc<span class="op">=</span><span class="st">'first'</span>).reset_index()</span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a>finance_wide.to_csv(PROJECT_ROOT <span class="op">/</span> <span class="st">'data/clean/finance_wide.csv'</span>, index<span class="op">=</span><span class="va">False</span>, encoding<span class="op">=</span><span class="st">'utf-8-sig'</span>)</span>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a>index_clean.head(), macro_wide.head(), finance_wide.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="11">
+<pre><code>(        date    code  name      open     close      high       low  \
+ 0 2020-01-02  000001  上证综指  3066.336  3085.198  3098.100  3066.336   
+ 1 2020-01-03  000001  上证综指  3089.022  3083.786  3093.819  3074.518   
+ 2 2020-01-06  000001  上证综指  3070.909  3083.408  3107.203  3065.309   
+ 3 2020-01-07  000001  上证综指  3085.488  3104.802  3105.451  3084.329   
+ 4 2020-01-08  000001  上证综指  3094.239  3066.893  3094.239  3059.131   
+ 
+         volume  amount   pct_chg  index_return  
+ 0  29247020800     NaN       NaN           NaN  
+ 1  26149666700     NaN -0.045767     -0.000458  
+ 2  31257584200     NaN -0.012258     -0.000123  
+ 3  27658311100     NaN  0.693843      0.006914  
+ 4  29787255300     NaN -1.220980     -0.012285  ,
+ indicator    month  cpi_yoy  m2_yoy
+ 0          2020-01      4.5     8.4
+ 1          2020-02      5.4     8.8
+ 2          2020-03      5.2    10.1
+ 3          2020-04      4.3    11.1
+ 4          2020-05      3.3    11.1,
+ indicator    code  name industry  year  net_profit_margin  revenue_growth  \
+ 0          000063  中兴通讯       通讯  2021             6.1437         12.8841   
+ 1          000063  中兴通讯       通讯  2022             6.3370          7.3635   
+ 2          000063  中兴通讯       通讯  2023             7.4373          1.0544   
+ 3          000063  中兴通讯       通讯  2024             6.8885         -2.3759   
+ 4          000063  中兴通讯       通讯  2025             4.1563         10.3849   
+ 
+ indicator    roe  
+ 0          13.23  
+ 1          13.78  
+ 2          13.71  
+ 3          11.57  
+ 4           7.45  )</code></pre>
+</div>
+</div>
+</section>
+<section id="合并执行" class="level3" data-number="3.3.2">
+<h3 data-number="3.3.2" class="anchored" data-anchor-id="合并执行"><span class="header-section-number">3.3.2</span> 3.3.2 合并执行</h3>
+<p>先把个股日度数据与沪深 300 日度收益率按 <code>date</code> 左连接，再处理日度股票数据和月度宏观数据的频率差异。这里将每个股票交易日映射到所在月份，再把 CPI 和 M2 接到对应月份上。</p>
+<div id="37c94df3" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-05-17T16:03:19.416934Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-05-17T16:03:19.416873Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-05-17T16:03:19.497359Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-05-17T16:03:19.497160Z&quot;}}" data-execution_count="12">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>merge_log <span class="op">=</span> []</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>hs300 <span class="op">=</span> index_clean[index_clean[<span class="st">'code'</span>] <span class="op">==</span> <span class="st">'000300'</span>][[<span class="st">'date'</span>, <span class="st">'close'</span>, <span class="st">'index_return'</span>]].rename(</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    columns<span class="op">=</span>{<span class="st">'close'</span>: <span class="st">'hs300_close'</span>, <span class="st">'index_return'</span>: <span class="st">'hs300_return'</span>}</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>before <span class="op">=</span> <span class="bu">len</span>(stock_clean)</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>combined <span class="op">=</span> stock_clean.merge(hs300, on<span class="op">=</span><span class="st">'date'</span>, how<span class="op">=</span><span class="st">'left'</span>)</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>merge_log.append({</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">'step'</span>: <span class="st">'stock_left_join_hs300'</span>,</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">'join_key'</span>: <span class="st">'date'</span>,</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">'before_rows'</span>: before,</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">'after_rows'</span>: <span class="bu">len</span>(combined),</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">'row_change'</span>: <span class="bu">len</span>(combined) <span class="op">-</span> before,</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">'explanation'</span>: <span class="st">'左连接保留全部个股交易日；行数不变说明沪深300日期键没有造成重复匹配。'</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>before <span class="op">=</span> <span class="bu">len</span>(combined)</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>combined[<span class="st">'month'</span>] <span class="op">=</span> combined[<span class="st">'date'</span>].dt.to_period(<span class="st">'M'</span>).astype(<span class="bu">str</span>)</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>combined <span class="op">=</span> combined.merge(macro_wide, on<span class="op">=</span><span class="st">'month'</span>, how<span class="op">=</span><span class="st">'left'</span>)</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>merge_log.append({</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>    <span class="st">'step'</span>: <span class="st">'join_monthly_macro'</span>,</span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>    <span class="st">'join_key'</span>: <span class="st">'month'</span>,</span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>    <span class="st">'before_rows'</span>: before,</span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>    <span class="st">'after_rows'</span>: <span class="bu">len</span>(combined),</span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>    <span class="st">'row_change'</span>: <span class="bu">len</span>(combined) <span class="op">-</span> before,</span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>    <span class="st">'explanation'</span>: <span class="st">'把月度宏观变量映射到每个交易日；宏观宽表每月一行，因此左连接后行数应保持不变。'</span></span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>combined.to_csv(PROJECT_ROOT <span class="op">/</span> <span class="st">'data/combined/combined_data.csv'</span>, index<span class="op">=</span><span class="va">False</span>, encoding<span class="op">=</span><span class="st">'utf-8-sig'</span>)</span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a>combined.to_parquet(PROJECT_ROOT <span class="op">/</span> <span class="st">'data/combined/combined_data.parquet'</span>, index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a>pd.DataFrame(merge_log)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="12">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">step</th>
+<th data-quarto-table-cell-role="th">join_key</th>
+<th data-quarto-table-cell-role="th">before_rows</th>
+<th data-quarto-table-cell-role="th">after_rows</th>
+<th data-quarto-table-cell-role="th">row_change</th>
+<th data-quarto-table-cell-role="th">explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>stock_left_join_hs300</td>
+<td>date</td>
+<td>15391</td>
+<td>15391</td>
+<td>0</td>
+<td>左连接保留全部个股交易日；行数不变说明沪深300日期键没有造成重复匹配。</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>join_monthly_macro</td>
+<td>month</td>
+<td>15391</td>
+<td>15391</td>
+<td>0</td>
+<td>把月度宏观变量映射到每个交易日；宏观宽表每月一行，因此左连接后行数应保持不变。</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="第二部分数据存储与管理进阶演示" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> 第二部分：数据存储与管理（进阶演示）</h1>
+<p>在已完成 CSV 存储（方式 A）的基础上，额外演示方式 B（Parquet）。</p>
+<section id="数据存储格式方式-bparquet" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="数据存储格式方式-bparquet"><span class="header-section-number">4.1</span> 2.2 数据存储格式（方式 B：Parquet）</h2>
+<p>选择方式 B：Parquet。下面演示三件事：只读取需要的列、查看 Schema，以及比较 CSV 与 Parquet 的读取耗时和文件大小。</p>
+<div id="4b68c5bf" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-05-17T16:03:19.498377Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-05-17T16:03:19.498323Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-05-17T16:03:19.561828Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-05-17T16:03:19.561618Z&quot;}}" data-execution_count="13">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>df_small <span class="op">=</span> pd.read_parquet(PROJECT_ROOT <span class="op">/</span> <span class="st">'data/clean/stock_clean.parquet'</span>, columns<span class="op">=</span>[<span class="st">'date'</span>, <span class="st">'code'</span>, <span class="st">'close'</span>])</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>schema <span class="op">=</span> pq.read_schema(PROJECT_ROOT <span class="op">/</span> <span class="st">'data/clean/stock_clean.parquet'</span>)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(schema)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>t0 <span class="op">=</span> time.time()</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>pd.read_csv(PROJECT_ROOT <span class="op">/</span> <span class="st">'data/clean/stock_clean.csv'</span>)</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>csv_time <span class="op">=</span> time.time() <span class="op">-</span> t0</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>csv_size <span class="op">=</span> os.path.getsize(PROJECT_ROOT <span class="op">/</span> <span class="st">'data/clean/stock_clean.csv'</span>) <span class="op">/</span> <span class="dv">1024</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>t0 <span class="op">=</span> time.time()</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>pd.read_parquet(PROJECT_ROOT <span class="op">/</span> <span class="st">'data/clean/stock_clean.parquet'</span>)</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>pq_time <span class="op">=</span> time.time() <span class="op">-</span> t0</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>pq_size <span class="op">=</span> os.path.getsize(PROJECT_ROOT <span class="op">/</span> <span class="st">'data/clean/stock_clean.parquet'</span>) <span class="op">/</span> <span class="dv">1024</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>storage_compare <span class="op">=</span> pd.DataFrame([</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>    {<span class="st">'format'</span>: <span class="st">'CSV'</span>, <span class="st">'read_seconds'</span>: csv_time, <span class="st">'size_kb'</span>: csv_size},</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>    {<span class="st">'format'</span>: <span class="st">'Parquet'</span>, <span class="st">'read_seconds'</span>: pq_time, <span class="st">'size_kb'</span>: pq_size},</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>storage_compare</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>date: timestamp[ns]
+code: string
+name: string
+industry: string
+open: double
+close: double
+high: double
+low: double
+volume: double
+amount: double
+pct_chg: double
+return: double
+is_extreme: bool
+-- schema metadata --
+pandas: '{"index_columns": [], "column_indexes": [], "columns": [{"name":' + 1529</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="13">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">format</th>
+<th data-quarto-table-cell-role="th">read_seconds</th>
+<th data-quarto-table-cell-role="th">size_kb</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>CSV</td>
+<td>0.009124</td>
+<td>1999.310547</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>Parquet</td>
+<td>0.001747</td>
+<td>831.941406</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>从本次数据规模看，CSV 和 Parquet 的读取速度差异不会特别稳定，因为文件都不大，系统缓存和单次运行状态会影响耗时。Parquet 的优势主要体现在列式读取和类型保留：当股票数量更多、时间跨度更长，或只需要读取少数列做分析时，Parquet 通常会更省空间，也更适合反复读取。</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./01_download.html" class="pagination-link" aria-label="第一部分：数据获取">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">第一部分：数据获取</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./03_analysis.html" class="pagination-link" aria-label="第四部分：描述性统计与可视化">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">第四部分：描述性统计与可视化</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
