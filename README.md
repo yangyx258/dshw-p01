@@ -65,10 +65,3 @@ https://github.com/yangyx258/dshw-p01
 ## AI 使用说明
 
 本项目使用 ChatGPT/Codex 辅助生成项目结构、Notebook 代码和报告文字。主要提示词为：阅读 `homework/readme.md` 与 `homework/ex_P02a_get_clean_fin_data.md`，按 P02a 要求为杨艺欣（25210279）生成可复现的数据下载、清洗、分析和报告项目，并同步到 GitHub 仓库。
-
-## 维护记录
-
-- 2026-05-17：对 `01_download.ipynb`、`02_clean.ipynb`、`03_analysis.ipynb` 的说明文字做自然化改写，减少模板化表达；代码逻辑不变，仅压缩保留必要注释。
-- 2026-05-17：按 `homework/ex_P02a_get_clean_fin_data.md` 逐项对齐必做要求。重点调整 `02_clean.ipynb`：将单表清洗拆成缺失值检测、缺失值处理、日期格式统一、数据类型检查、重复值处理、离群值标注 6 个步骤，并为每步补充清洗前后变化说明；同步检查 `03_analysis.ipynb` 的图表解读和 CAPM 讨论结构。
-- 2026-05-17：将 3 个 Notebook 的 Markdown 标题序号调整为与 `homework/ex_P02a_get_clean_fin_data.md` 对应，例如 `1.1`、`3.1`、`4.2`、`5.1`，便于按老师文档逐项检查。
-- 2026-05-20：新增 Quarto Book 配置（`_quarto.yml`、`index.qmd`），渲染生成 `docs/` 静态站点，用于 GitHub Pages 加分项发布。
